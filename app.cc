@@ -32,20 +32,20 @@ namespace jig {
 namespace {
 
 void showUsage(bool err = false) {
-  fprintf(!err ? stdout : stderr, "Usage: %s FILENAME...\n",
-          App::getInstance().getExecName());
+  std::fprintf(!err ? stdout : stderr, "Usage: %s FILENAME...\n",
+               App::getInstance().getExecName());
   if (!err)
-    fputs("Options:\n"
-          "  -h, --help     Print this text and exit.\n"
-          "  -v, --version  Print version information and exit.\n",
-          stdout);
+    std::fputs("Options:\n"
+               "  -h, --help     Print this text and exit.\n"
+               "  -v, --version  Print version information and exit.\n",
+               stdout);
 }
 
 void showVersion() {
-  printf("%s %d.%d.%d\n"
-         "Written by Nathan Forbes (2017)\n",
-         App::PROGRAM_NAME, App::VERSION_MAJOR, App::VERSION_MINOR,
-         App::VERSION_BUILD);
+  std::printf("%s %d.%d.%d\n"
+              "Written by Nathan Forbes (2017)\n",
+              App::PROGRAM_NAME, App::VERSION_MAJOR, App::VERSION_MINOR,
+              App::VERSION_BUILD);
 }
 
 void cleanup() {
@@ -156,7 +156,7 @@ int App::run(int argc, char **argv) {
 
 void App::setProgramName() {
   if (m_ExecName && *m_ExecName) {
-    const char *p = strrchr(m_ExecName, '/');
+    const char *p = std::strrchr(m_ExecName, '/');
     if (p && *p && *(p + 1))
       m_ProgramName = p + 1;
     else
