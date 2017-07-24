@@ -2,7 +2,7 @@ CXX = clang++
 CXXFLAGS = -g -Wall -Werror -std=c++14 -stdlib=libc++ -fno-exceptions -fno-rtti
 
 ifeq ($(debug),)
-	CXXFLAGS += -DNDEBUG
+	CXXFLAGS += -O2 -march=native -mtune=native -DNDEBUG
 endif
 
 LIBS = -lncurses
@@ -53,16 +53,16 @@ OBJECTS = $(SOURCES:.cc=.o)
 
 all: $(TARGET)
 
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS) $(HEADERS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(TARGET) $(LIBS)
 
 .cc.o:
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJECTS)
+	@rm -f $(OBJECTS)
 
 clobber:
-	rm -f $(OBJECTS) $(TARGET)
+	@rm -f $(OBJECTS) $(TARGET)
 
 .PHONY: clean clobber
