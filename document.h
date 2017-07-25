@@ -17,8 +17,6 @@
 #ifndef __JIG_DOCUMENT_H__
 #define __JIG_DOCUMENT_H__
 
-#include <cstdint>
-
 #include "buffer.h"
 #include "bufferview.h"
 #include "edit.h"

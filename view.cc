@@ -23,37 +23,37 @@
 namespace jig {
 
 void View::draw() {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
   m_Window->refresh();
 }
 
 void View::clear() {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
   m_Window->clear();
 }
 
 int View::getHeight() const {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
   return m_Window->getHeight();
 }
 
 int View::getWidth() const {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
   return m_Window->getWidth();
 }
 
 int View::getStartY() const {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
   return m_Window->getStartY();
 }
 
 int View::getStartX() const {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
   return m_Window->getStartX();
 }
 
 int View::getKeypress() {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
   return m_Window->getKeypress();
 }
 
@@ -62,7 +62,7 @@ void View::initWindow(int height, int width, int startY, int startX) {
 }
 
 void View::writeToWindow() {
-  assert(m_Window != nullptr && "This View's Window object is unitialized");
+  assert(m_Window != nullptr && "This View's Window object is uninitialized");
 }
 
 } // namespace jig
