@@ -46,7 +46,7 @@ void EraseBackEdit::undo(Buffer &buffer) {
 }
 
 void EraseFrontEdit::apply(Buffer &buffer) {
-  if (m_Count > buffer.size() - m_Pos)
+  if (m_Count > buffer.getLength() - m_Pos)
     return;
   m_Erased = buffer.getStringAt(m_Pos, m_Count);
   buffer.erase(m_Pos, m_Count);

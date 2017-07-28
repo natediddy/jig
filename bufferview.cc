@@ -65,21 +65,54 @@ void BufferView::writeToWindow() {
   if (n > height)
     last -= n - height;
 
+  std::size_t p = first->begin() - m_Buffer->getStrBuf().begin();
   int y = 0;
   int x;
+  auto &app = App::getInstance();
+
+  App::Mode mode = app.getCurrentMode();
+  auto slice = app.getSelectModeHandler().getSlice();
+  auto inSelectedSlice = [&slice](std::size_t pos) -> bool {
+    return pos >= slice.first && pos <= slice.second;
+  };
 
   std::for_each(first, last + 1, [&](const Line &l) {
-    if (m_Data->offsetX >= l.size()) {
+    auto len = l.size();
+    if (m_Data->offsetX >= len) {
+      bool selected = mode == App::Mode::SELECT && inSelectedSlice(p);
+      if (selected)
+        m_Window->enableAttrs(Window::Attr::REVERSE);
+      m_Window->put(y, 0, ' ');
+      if (selected)
+        m_Window->disableAttrs(Window::Attr::REVERSE);
+      p += len + 1;
       ++y;
       return;
     }
+    p += m_Data->offsetX;
     auto b = l.begin() + m_Data->offsetX;
     auto e = l.end();
     n = e - b;
     if (n > width)
       e -= n - width;
     x = 0;
-    std::for_each(b, e, [&](const char &c) { m_Window->put(y, x++, c); });
+    if (mode == App::Mode::SELECT) {
+      std::for_each(b, e, [&](const char &c) {
+        bool selected = inSelectedSlice(p);
+        if (selected)
+          m_Window->enableAttrs(Window::Attr::REVERSE);
+        m_Window->put(y, x++, c);
+        if (selected)
+          m_Window->disableAttrs(Window::Attr::REVERSE);
+        ++p;
+      });
+    } else {
+      std::for_each(b, e, [&](const char &c) {
+        m_Window->put(y, x++, c);
+        ++p;
+      });
+    }
+    ++p;
     ++y;
   });
 

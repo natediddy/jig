@@ -33,12 +33,32 @@ constexpr int KEY_BACKSPACE_CUSTOM = 127;
 constexpr int KEY_NEWLINE = '\n';
 constexpr int KEY_TAB = '\t';
 
+// constexpr int KEY_CTRL_A = 1;
+// constexpr int KEY_CTRL_B = 2;
+constexpr int KEY_CTRL_C = 3;
+// constexpr int KEY_CTRL_D = 4;
+// constexpr int KEY_CTRL_E = 5;
+// constexpr int KEY_CTRL_F = 6;
+// constexpr int KEY_CTRL_G = 7;
+// constexpr int KEY_CTRL_H = 8;
+// constexpr int KEY_CTRL_I = 9;
+// constexpr int KEY_CTRL_J = 10;
+// constexpr int KEY_CTRL_K = 11;
+// constexpr int KEY_CTRL_L = 12;
+// constexpr int KEY_CTRL_M = 13;
+// constexpr int KEY_CTRL_N = 14;
+// constexpr int KEY_CTRL_O = 15;
+constexpr int KEY_CTRL_P = 16;
 constexpr int KEY_CTRL_Q = 17;
 constexpr int KEY_CTRL_R = 18;
 constexpr int KEY_CTRL_S = 19;
+// constexpr int KEY_CTRL_T = 20;
 constexpr int KEY_CTRL_U = 21;
 constexpr int KEY_CTRL_V = 22;
+// constexpr int KEY_CTRL_W = 23;
 constexpr int KEY_CTRL_X = 24;
+// constexpr int KEY_CTRL_Y = 25;
+// constexpr int KEY_CTRL_Z = 26;
 
 constexpr int KEY_ALT_LEFT = KEY_MAX + 1;
 constexpr int KEY_ALT_RIGHT = KEY_MAX + 2;
@@ -70,9 +90,9 @@ void UI::start() {
     std::exit(EXIT_FAILURE);
   }
 
-  raw();
   noecho();
   cbreak();
+  raw();
   set_escdelay(25);
   keypad(stdscr, true);
 
@@ -121,7 +141,8 @@ void UI::draw() {
 
 void UI::handleInput() {
   int k = m_BufferView.getKeypress();
-  auto &docList = App::getInstance().getDocumentList();
+  auto &app = App::getInstance();
+  auto &docList = app.getDocumentList();
 
   switch (k) {
     case KEY_LEFT:
@@ -149,6 +170,26 @@ void UI::handleInput() {
       docList.setNextAsCurrent();
       update(true, true, true);
       break;
+    case KEY_CTRL_C:
+      if (app.getCurrentMode() == App::Mode::SELECT) {
+        app.getClipboard().setContent(
+          app.getSelectModeHandler().getText(docList.getCurrent()));
+        app.setCurrentMode(App::Mode::NORMAL);
+        app.getSelectModeHandler().reset();
+        update(false, true, true);
+      }
+      break;
+    case KEY_CTRL_P: {
+      auto &clipboard = app.getClipboard();
+      if (!clipboard.isEmpty()) {
+        docList.getCurrent().insert(clipboard.getContent());
+        update(true, true, true);
+      }
+      break;
+    }
+    case KEY_CTRL_Q:
+      app.setKeepRunning(false);
+      break;
     case KEY_CTRL_R:
       docList.getCurrent().redo();
       update(true, true, true);
@@ -157,18 +198,34 @@ void UI::handleInput() {
       docList.getCurrent().save();
       update(true, false, false);
       break;
-    case KEY_CTRL_Q:
-      App::getInstance().setKeepRunning(false);
-      break;
     case KEY_CTRL_U:
       docList.getCurrent().undo();
       update(true, true, true);
       break;
     case KEY_CTRL_V:
-      // Visually select text.
+      switch (app.getCurrentMode()) {
+        case App::Mode::NORMAL:
+          app.setCurrentMode(App::Mode::SELECT);
+          JIG_DEBUG("Starting SELECT mode...");
+          app.getSelectModeHandler().init(docList.getCurrent());
+          break;
+        case App::Mode::SELECT:
+          app.setCurrentMode(App::Mode::NORMAL);
+          app.getSelectModeHandler().reset();
+          break;
+      }
+      update(false, true, true);
       break;
     case KEY_CTRL_X:
-      // Paste from clipboard.
+      if (app.getCurrentMode() == App::Mode::SELECT) {
+        auto &doc = docList.getCurrent();
+        auto &smh = app.getSelectModeHandler();
+        app.getClipboard().setContent(smh.getText(doc));
+        smh.eraseText(doc);
+        app.setCurrentMode(App::Mode::NORMAL);
+        smh.reset();
+        update(true, true, true);
+      }
       break;
     case KEY_NEWLINE:
       docList.getCurrent().insert('\n');

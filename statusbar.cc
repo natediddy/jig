@@ -47,6 +47,9 @@ int StatusBar::getKeypress() {
 void StatusBar::update() {
   const Document &doc = App::getInstance().getDocumentList().getCurrent();
   m_Text = doc.getTitle();
+#ifndef NDEBUG
+  m_BufferPos = doc.getCursorPosition();
+#endif
   m_LineNumber = doc.getCursorLineNumber();
   m_ColumnNumber = doc.getCursorColumnNumber();
   m_Portion = doc.getViewPortion();
@@ -66,6 +69,22 @@ void StatusBar::writeToWindow() {
   View::writeToWindow();
   m_Window->put(0, 0, m_Text);
 
+#ifndef NDEBUG
+  switch (m_Portion) {
+    case Document::TOP:
+      snprintf(dataStr, DATA_STR_SIZE, "%u,%u (%u) %s", m_LineNumber,
+               m_ColumnNumber, m_BufferPos, TOP_STRING);
+      break;
+    case Document::BOTTOM:
+      snprintf(dataStr, DATA_STR_SIZE, "%u,%u (%u) %s", m_LineNumber,
+               m_ColumnNumber, m_BufferPos, BOTTOM_STRING);
+      break;
+    default:
+      snprintf(dataStr, DATA_STR_SIZE, "%u,%u (%u) %%%u", m_LineNumber,
+               m_ColumnNumber, m_BufferPos, m_Portion);
+      break;
+  }
+#else
   switch (m_Portion) {
     case Document::TOP:
       snprintf(dataStr, DATA_STR_SIZE, "%u,%u %s", m_LineNumber, m_ColumnNumber,
@@ -80,6 +99,7 @@ void StatusBar::writeToWindow() {
                m_ColumnNumber, m_Portion);
       break;
   }
+#endif
 
   auto n = std::strlen(dataStr);
   int stop = getWidth() - n;

@@ -39,18 +39,19 @@ public:
   Document(Document &&) = default;
   Document &operator=(Document &&) = default;
 
+  Buffer *getBuffer() { return m_Buffer.get(); }
   const Buffer *getBuffer() const { return m_Buffer.get(); }
+
   const File *getFile() const { return m_File.get(); }
 
-  const BufferView::Data *getBufferViewData() const {
-    return &m_BufferViewData;
-  }
+  const BufferView::Data *getBufferViewData() const { return &m_ViewData; }
 
   const std::string &getTitle() const { return m_Title; }
   void setTitle(const std::string &title) { m_Title = title; }
   void setTitle(std::string &&title) { m_Title = std::move(title); }
 
   Document &insert(char ch);
+  Document &insert(const std::string &str);
   Document &insert(std::size_t pos, char ch);
   Document &insert(std::size_t pos, std::string &&str);
 
@@ -85,13 +86,13 @@ public:
   void moveCursorToEndOfLine();
 
   unsigned int getCursorLineNumber() const {
-    return m_Buffer->getConstLineIterator(m_BufferViewData.lineIndex) -
+    return m_Buffer->getConstLineIterator(m_ViewData.lineIndex) -
            m_Buffer->getFirstLineIterator() + 1;
   }
 
-  unsigned int getCursorColumnNumber() const {
-    return m_BufferViewData.pos + 1;
-  }
+  unsigned int getCursorColumnNumber() const { return m_ViewData.pos + 1; }
+
+  std::size_t getCursorPosition() const;
 
   unsigned int getViewPortion() const;
 
@@ -104,8 +105,6 @@ private:
 
   void setContentsFromString(const std::string &str);
   void setContentsFromFile(const std::string &path);
-
-  std::size_t getCursorPosition() const;
 
   std::unique_ptr<Buffer> m_Buffer = nullptr;
   std::unique_ptr<File> m_File = nullptr;
@@ -120,7 +119,7 @@ private:
   // There is only one BufferView instance in the entire program, but when it's
   // time to draw a Document's contents to the screen, the BufferView will grab
   // a const pointer of this member variable from the current Document.
-  BufferView::Data m_BufferViewData;
+  BufferView::Data m_ViewData;
 
   // Has this Document been modified since the last save?
   bool m_Dirty = false;

@@ -17,7 +17,9 @@
 #ifndef __JIG_APP_H__
 #define __JIG_APP_H__
 
+#include "clipboard.h"
 #include "documentlist.h"
+#include "selectmodehandler.h"
 #include "timeutils.h"
 #include "ui.h"
 
@@ -25,6 +27,11 @@ namespace jig {
 
 class App {
 public:
+  enum class Mode {
+    NORMAL,
+    SELECT,
+  };
+
   static constexpr char PROGRAM_NAME[] = "jig";
   static constexpr char DISPLAY_NAME[] = "Jig";
 
@@ -36,6 +43,11 @@ public:
 
   DocumentList &getDocumentList() { return m_DocumentList; }
   UI &getUI() { return m_UI; }
+  Clipboard &getClipboard() { return m_Clipboard; }
+  SelectModeHandler &getSelectModeHandler() { return m_SelectModeHandler; }
+
+  Mode getCurrentMode() const { return m_CurrentMode; }
+  void setCurrentMode(Mode mode) { m_CurrentMode = mode; }
 
   const char *getExecName() const { return m_ExecName; }
   const char *getProgramName() const { return m_ProgramName; }
@@ -52,6 +64,9 @@ private:
   DocumentList m_DocumentList;
   UI m_UI;
   time::Timer m_Timer;
+  Clipboard m_Clipboard;
+  SelectModeHandler m_SelectModeHandler;
+  Mode m_CurrentMode;
   const char *m_ExecName;
   const char *m_ProgramName;
   bool m_KeepRunning = true;

@@ -33,9 +33,7 @@ public:
   const std::string &getStrBuf() const { return m_StrBuf; }
   const std::vector<Line> &getLineBuf() const { return m_LineBuf; }
 
-  std::size_t length() const { return m_StrBuf.length(); }
-  std::size_t size() const { return m_StrBuf.size(); }
-
+  std::size_t getLength() const { return m_StrBuf.length(); }
   std::size_t getTotalLines() const { return m_LineBuf.size(); }
 
   std::string getStringAt(std::size_t pos, std::size_t count) const;

@@ -21,6 +21,7 @@ SOURCES = app.cc \
 	  logger.cc \
 	  main.cc \
 	  path.cc \
+	  selectmodehandler.cc \
 	  statusbar.cc \
 	  system.cc \
 	  timeutils.cc \
@@ -32,6 +33,7 @@ SOURCES = app.cc \
 HEADERS = app.h \
 	  buffer.h \
 	  bufferview.h \
+	  clipboard.h \
 	  color.h \
 	  document.h \
 	  documentlist.h \
@@ -41,6 +43,7 @@ HEADERS = app.h \
 	  line.h \
 	  logger.h \
 	  path.h \
+	  selectmodehandler.h \
 	  statusbar.h \
 	  system.h \
 	  timeutils.h \

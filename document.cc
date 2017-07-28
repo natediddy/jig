@@ -61,6 +61,16 @@ Document &Document::insert(char ch) {
   return *this;
 }
 
+Document &Document::insert(const std::string &str) {
+  std::unique_ptr<Edit> edit =
+    std::make_unique<InsertEdit>(getCursorPosition(), str);
+  edit->apply(*m_Buffer);
+  m_EditHistory.addNew(std::move(edit));
+  App::getInstance().getUI().getBufferView().clear();
+  m_Dirty = true;
+  return *this;
+}
+
 Document &Document::insert(std::size_t pos, char ch) {
   std::unique_ptr<Edit> edit = std::make_unique<InsertEdit>(pos, ch);
   edit->apply(*m_Buffer);
@@ -167,16 +177,22 @@ Document &Document::redo() {
 }
 
 void Document::moveCursorLeft() {
-  if (m_BufferViewData.cursorX == 0) {
-    if (m_BufferViewData.offsetX > 0) {
-      --m_BufferViewData.offsetX;
-      --m_BufferViewData.pos;
-      App::getInstance().getUI().getBufferView().clear();
-    }
-    return;
+  auto &app = App::getInstance();
+
+  if (m_ViewData.cursorX == 0) {
+    if (m_ViewData.offsetX == 0)
+      return;
+    --m_ViewData.offsetX;
+    app.getUI().getBufferView().clear();
+    goto finish;
   }
-  --m_BufferViewData.cursorX;
-  --m_BufferViewData.pos;
+
+  --m_ViewData.cursorX;
+
+finish:
+  --m_ViewData.pos;
+  if (app.getCurrentMode() == App::Mode::SELECT)
+    app.getSelectModeHandler().moveLeft();
 }
 
 void Document::moveCursorLeft(int n) {
@@ -186,17 +202,20 @@ void Document::moveCursorLeft(int n) {
 
 void Document::moveCursorRight() {
   Buffer::ConstLineIterator line =
-    m_Buffer->getConstLineIterator(m_BufferViewData.lineIndex);
+    m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
 
-  if (m_BufferViewData.pos < line->length()) {
-    auto &view = App::getInstance().getUI().getBufferView();
-    if (m_BufferViewData.cursorX < view.getWidth()) {
-      ++m_BufferViewData.cursorX;
+  if (m_ViewData.pos < line->length()) {
+    auto &app = App::getInstance();
+    auto &view = app.getUI().getBufferView();
+    if (m_ViewData.cursorX < view.getWidth()) {
+      ++m_ViewData.cursorX;
     } else {
-      ++m_BufferViewData.offsetX;
+      ++m_ViewData.offsetX;
       view.clear();
     }
-    ++m_BufferViewData.pos;
+    ++m_ViewData.pos;
+    if (app.getCurrentMode() == App::Mode::SELECT)
+      app.getSelectModeHandler().moveRight(*this);
   }
 }
 
@@ -207,24 +226,32 @@ void Document::moveCursorRight(int n) {
 
 void Document::moveCursorUp() {
   Buffer::ConstLineIterator line =
-    m_Buffer->getConstLineIterator(m_BufferViewData.lineIndex);
+    m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
 
   if (line == m_Buffer->getFirstLineIterator())
     return;
 
   --line;
-  --m_BufferViewData.lineIndex;
+  --m_ViewData.lineIndex;
 
-  if (line->length() < m_BufferViewData.pos) {
-    m_BufferViewData.pos = line->length();
-    m_BufferViewData.cursorX = m_BufferViewData.pos;
+  auto &app = App::getInstance();
+  App::Mode mode = app.getCurrentMode();
+
+  if (mode == App::Mode::SELECT)
+    app.getSelectModeHandler().moveLeft(m_ViewData.pos);
+
+  if (line->length() < m_ViewData.pos) {
+    m_ViewData.pos = line->length();
+    m_ViewData.cursorX = m_ViewData.pos;
+  } else if (mode == App::Mode::SELECT) {
+    app.getSelectModeHandler().moveLeft(line->length() - m_ViewData.pos + 1);
   }
 
-  if (m_BufferViewData.cursorY > 0) {
-    --m_BufferViewData.cursorY;
-  } else if (m_BufferViewData.offsetY > 0) {
-    --m_BufferViewData.offsetY;
-    App::getInstance().getUI().getBufferView().clear();
+  if (m_ViewData.cursorY > 0) {
+    --m_ViewData.cursorY;
+  } else if (m_ViewData.offsetY > 0) {
+    --m_ViewData.offsetY;
+    app.getUI().getBufferView().clear();
   }
 }
 
@@ -235,24 +262,33 @@ void Document::moveCursorUp(int n) {
 
 void Document::moveCursorDown() {
   Buffer::ConstLineIterator line =
-    m_Buffer->getConstLineIterator(m_BufferViewData.lineIndex);
+    m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
 
   if (line == m_Buffer->getLastLineIterator())
     return;
 
-  ++line;
-  ++m_BufferViewData.lineIndex;
+  auto &app = App::getInstance();
+  App::Mode mode = app.getCurrentMode();
 
-  if (m_BufferViewData.pos > line->length()) {
-    m_BufferViewData.pos = line->length();
-    m_BufferViewData.cursorX = m_BufferViewData.pos;
+  if (mode == App::Mode::SELECT)
+    app.getSelectModeHandler().moveRight(*this,
+                                         line->length() - m_ViewData.pos);
+
+  ++line;
+  ++m_ViewData.lineIndex;
+
+  if (m_ViewData.pos > line->length()) {
+    m_ViewData.pos = line->length();
+    m_ViewData.cursorX = m_ViewData.pos;
+  } else if (mode == App::Mode::SELECT) {
+    app.getSelectModeHandler().moveRight(*this, m_ViewData.pos + 1);
   }
 
   auto &view = App::getInstance().getUI().getBufferView();
-  if (m_BufferViewData.cursorY < view.getHeight() - 1) {
-    ++m_BufferViewData.cursorY;
+  if (m_ViewData.cursorY < view.getHeight() - 1) {
+    ++m_ViewData.cursorY;
   } else {
-    ++m_BufferViewData.offsetY;
+    ++m_ViewData.offsetY;
     view.clear();
   }
 }
@@ -263,24 +299,32 @@ void Document::moveCursorDown(int n) {
 }
 
 void Document::moveCursorToBeginningOfLine() {
-  moveCursorLeft(m_BufferViewData.pos);
+  moveCursorLeft(m_ViewData.pos);
 }
 
 void Document::moveCursorToEndOfLine() {
   moveCursorRight(
-    m_Buffer->getConstLineIterator(m_BufferViewData.lineIndex)->length() -
-    m_BufferViewData.pos);
+    m_Buffer->getConstLineIterator(m_ViewData.lineIndex)->length() -
+    m_ViewData.pos);
+}
+
+std::size_t Document::getCursorPosition() const {
+  std::size_t pos = 0;
+  std::for_each(m_Buffer->getFirstLineIterator(),
+                m_Buffer->getConstLineIterator(m_ViewData.lineIndex),
+                [&pos](const auto &line) { pos += line.length() + 1; });
+  pos += m_ViewData.pos;
+  return pos;
 }
 
 unsigned int Document::getViewPortion() const {
   auto &ui = App::getInstance().getUI();
-  if (!ui.isCurrentlyRunning() || m_BufferViewData.offsetY == 0)
+  if (!ui.isCurrentlyRunning() || m_ViewData.offsetY == 0)
     return TOP;
 
   Buffer::ConstLineIterator lastVisible = m_Buffer->getLastLineIterator();
   int height = ui.getBufferView().getHeight();
-  auto n =
-    lastVisible - m_Buffer->getConstLineIterator(m_BufferViewData.offsetY);
+  auto n = lastVisible - m_Buffer->getConstLineIterator(m_ViewData.offsetY);
 
   if (n < height)
     return BOTTOM;
@@ -323,15 +367,6 @@ void Document::setContentsFromFile(const std::string &path) {
   }
 
   m_Buffer = std::make_unique<Buffer>(contents);
-}
-
-std::size_t Document::getCursorPosition() const {
-  std::size_t pos = 0;
-  std::for_each(m_Buffer->getFirstLineIterator(),
-                m_Buffer->getConstLineIterator(m_BufferViewData.lineIndex),
-                [&pos](const auto &line) { pos += line.length() + 1; });
-  pos += m_BufferViewData.pos;
-  return pos;
 }
 
 } // namespace jig

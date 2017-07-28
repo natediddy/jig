@@ -1,4 +1,4 @@
-//===--- statusbar.h ----------------------------------------------------===//
+//===--- clipboard.h ----------------------------------------------------===//
 // Copyright (c) 2017 Nathan Forbes
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,39 +14,28 @@
 // limitations under the License.
 //===--------------------------------------------------------------------===//
 
-#ifndef __JIG_STATUSBAR_H__
-#define __JIG_STATUSBAR_H__
+#ifndef __JIG_CLIPBOARD_H__
+#define __JIG_CLIPBOARD_H__
 
-#include <cstdint>
 #include <string>
-
-#include "view.h"
 
 namespace jig {
 
-class StatusBar : public View {
+class Clipboard {
 public:
-  StatusBar() = default;
+  Clipboard() = default;
 
-  virtual void init() final;
-  virtual void updateDimensions() final;
-  virtual int getKeypress() override;
+  const std::string &getContent() const { return m_Content; }
 
-  void update();
+  void setContent(const std::string &content) { m_Content = content; }
+  void setContent(std::string &&content) { m_Content = std::move(content); }
+
+  bool isEmpty() const { return m_Content.empty(); }
 
 private:
-  void initWindow();
-  void writeToWindow();
-
-  std::string m_Text;
-#ifndef NDEBUG
-  unsigned int m_BufferPos;
-#endif
-  unsigned int m_LineNumber;
-  unsigned int m_ColumnNumber;
-  unsigned int m_Portion;
+  std::string m_Content;
 };
 
 } // namespace jig
 
-#endif // __JIG_STATUSBAR_H__
+#endif // __JIG_CLIPBOARD_H__

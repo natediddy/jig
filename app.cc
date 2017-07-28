@@ -57,13 +57,12 @@ void cleanupOnSignal(int sig) {
   App::getInstance().getUI().stop();
   int exitStatus = EXIT_SUCCESS;
   switch (sig) {
+    // case SIGINT:
+    // Logger::info("Caught SIGINT signal");
+    // break;
     case SIGABRT:
       Logger::info("Caught SIGABRT signal");
       exitStatus = EXIT_FAILURE;
-      break;
-    case SIGINT:
-      Logger::info("Caught SIGINT signal");
-      exitStatus = 130;
       break;
     case SIGKILL:
       Logger::info("Caught SIGKILL signal");
@@ -91,8 +90,8 @@ void startup() {
   std::setlocale(LC_ALL, "");
   System::makeDirectory(System::getProgramDirectory());
   Logger::init();
+  // std::signal(SIGINT, cleanupOnSignal);
   std::signal(SIGABRT, cleanupOnSignal);
-  std::signal(SIGINT, cleanupOnSignal);
   std::signal(SIGKILL, cleanupOnSignal);
   std::signal(SIGHUP, cleanupOnSignal);
   std::signal(SIGQUIT, cleanupOnSignal);
