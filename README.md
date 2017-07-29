@@ -5,4 +5,4 @@ A work in progress...
 
 Building
 --------
-Just type `make`!
+For now just type `make`!
