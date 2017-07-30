@@ -102,7 +102,7 @@ void StatusBar::writeToWindow() {
 #endif
 
   auto n = std::strlen(dataStr);
-  int stop = getWidth() - n;
+  int stop = getWidth() - n - 1;
   int x;
   for (x = m_Text.size(); x < stop; ++x)
     m_Window->put(0, x, ' ');

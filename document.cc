@@ -206,7 +206,7 @@ void Document::moveCursorRight() {
   if (m_ViewData.pos < line->length()) {
     auto &app = App::getInstance();
     auto &view = app.getUI().getBufferView();
-    if (m_ViewData.cursorX < view.getWidth()) {
+    if (m_ViewData.cursorX < view.getWidth() - 1) {
       ++m_ViewData.cursorX;
     } else {
       ++m_ViewData.offsetX;
