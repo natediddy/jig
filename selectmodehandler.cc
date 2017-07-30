@@ -36,7 +36,6 @@ std::pair<std::size_t, std::size_t> maybeSwap(std::size_t head,
 
 void SelectModeHandler::init(const Document &doc) {
   m_Head = m_Tail = doc.getCursorPosition();
-  JIG_DEBUG("m_Head = m_Tail = %zu", m_Head);
 }
 
 std::pair<std::size_t, std::size_t> SelectModeHandler::getSlice() const {
@@ -52,7 +51,6 @@ std::string SelectModeHandler::getText(const Document &doc) const {
   auto p = maybeSwap(m_Head, m_Tail);
   auto text =
     doc.getBuffer()->getStrBuf().substr(p.first, (p.second - p.first) + 1);
-  JIG_DEBUG("text=\"%s\"", text.c_str());
   return text;
 }
 
@@ -62,10 +60,8 @@ void SelectModeHandler::eraseText(Document &doc) {
 }
 
 void SelectModeHandler::moveLeft() {
-  if (m_Tail > 0) {
+  if (m_Tail > 0)
     --m_Tail;
-    JIG_DEBUG("m_Tail=%zu", m_Tail);
-  }
 }
 
 void SelectModeHandler::moveLeft(int n) {
@@ -74,10 +70,8 @@ void SelectModeHandler::moveLeft(int n) {
 }
 
 void SelectModeHandler::moveRight(const Document &doc) {
-  if (m_Tail < doc.getBuffer()->getLength()) {
+  if (m_Tail < doc.getBuffer()->getLength())
     ++m_Tail;
-    JIG_DEBUG("m_Tail=%zu", m_Tail);
-  }
 }
 
 void SelectModeHandler::moveRight(const Document &doc, int n) {

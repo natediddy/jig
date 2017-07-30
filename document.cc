@@ -201,8 +201,7 @@ void Document::moveCursorLeft(int n) {
 }
 
 void Document::moveCursorRight() {
-  Buffer::ConstLineIterator line =
-    m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
+  auto line = m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
 
   if (m_ViewData.pos < line->length()) {
     auto &app = App::getInstance();
@@ -225,8 +224,7 @@ void Document::moveCursorRight(int n) {
 }
 
 void Document::moveCursorUp() {
-  Buffer::ConstLineIterator line =
-    m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
+  auto line = m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
 
   if (line == m_Buffer->getFirstLineIterator())
     return;
@@ -261,8 +259,7 @@ void Document::moveCursorUp(int n) {
 }
 
 void Document::moveCursorDown() {
-  Buffer::ConstLineIterator line =
-    m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
+  auto line = m_Buffer->getConstLineIterator(m_ViewData.lineIndex);
 
   if (line == m_Buffer->getLastLineIterator())
     return;
