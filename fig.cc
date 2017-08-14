@@ -1,3 +1,19 @@
+//===--- fig.cc ---------------------------------------------------------===//
+// Copyright (c) 2017 Nathan Forbes
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//===--------------------------------------------------------------------===//
+
 #include "fig.h"
 
 #include <cstdlib>
@@ -12,10 +28,14 @@ namespace {
 constexpr char COMMENT_CHAR = '#';
 constexpr char EQUAL_CHAR = '=';
 
-constexpr char BUILTIN_FIG[] = "WrapLines=false\n"
-                               "ShowLineNumbers=false\n"
-                               "UseSpacesForTabs=false\n"
-                               "TabWidth=4\n";
+constexpr char BUILTIN_FIG[] = "WrapLines=false
+"
+                               "ShowLineNumbers=false
+"
+                               "UseSpacesForTabs=false
+"
+                               "TabWidth=4
+";
 
 const std::unordered_map<std::string, Settings::ValueType> VALID_OPTIONS = {
   {"WrapLines", Settings::ValueType::BOOLEAN},
