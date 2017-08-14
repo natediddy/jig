@@ -1,0 +1,7 @@
+# Default config file for the Jig editor
+
+WrapLines = false
+ShowLineNumbers = false
+
+UseSpacesForTabs = false
+TabWidth = 4
