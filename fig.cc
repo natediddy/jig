@@ -28,14 +28,10 @@ namespace {
 constexpr char COMMENT_CHAR = '#';
 constexpr char EQUAL_CHAR = '=';
 
-constexpr char BUILTIN_FIG[] = "WrapLines=false
-"
-                               "ShowLineNumbers=false
-"
-                               "UseSpacesForTabs=false
-"
-                               "TabWidth=4
-";
+constexpr char BUILTIN_FIG[] = "WrapLines=false\n"
+                               "ShowLineNumbers=false\n"
+                               "UseSpacesForTabs=false\n"
+                               "TabWidth=4\n";
 
 const std::unordered_map<std::string, Settings::ValueType> VALID_OPTIONS = {
   {"WrapLines", Settings::ValueType::BOOLEAN},
