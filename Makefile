@@ -1,9 +1,17 @@
 CXX = clang++
-CXXFLAGS = -g -Wall -Werror -std=c++14 -stdlib=libc++ -fno-exceptions -fno-rtti
+CXXFLAGS = -Wall -Werror -std=c++14 -fno-exceptions -fno-rtti
 
 ifeq ($(debug),)
 	CXXFLAGS += -O2 -march=native -mtune=native -DNDEBUG
+else
+	CXXFLAGS += -g
 endif
+
+ifeq ($(prefix),)
+	prefix=/usr/local
+endif
+
+CXXFLAGS += -DJIG_INSTALL_PREFIX=\"$(prefix)\"
 
 LIBS = -lncurses
 
@@ -17,12 +25,16 @@ SOURCES = app.cc \
 	  documentlist.cc \
 	  edit.cc \
 	  edithistory.cc \
+	  fig.cc \
+	  figmanager.cc \
 	  file.cc \
 	  logger.cc \
 	  main.cc \
 	  path.cc \
 	  selectmodehandler.cc \
+	  settings.cc \
 	  statusbar.cc \
+	  strutils.cc \
 	  system.cc \
 	  timeutils.cc \
 	  titlebar.cc \
@@ -39,12 +51,16 @@ HEADERS = app.h \
 	  documentlist.h \
 	  edit.h \
 	  edithistory.h \
+	  fig.h \
+	  figmanager.h \
 	  file.h \
 	  line.h \
 	  logger.h \
 	  path.h \
 	  selectmodehandler.h \
+	  settings.h \
 	  statusbar.h \
+	  strutils.h \
 	  system.h \
 	  timeutils.h \
 	  titlebar.h \

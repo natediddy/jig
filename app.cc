@@ -16,6 +16,7 @@
 
 #include "app.h"
 
+#include <climits>
 #include <clocale>
 #include <csignal>
 #include <cstdio>
@@ -30,6 +31,8 @@
 
 namespace jig {
 namespace {
+
+constexpr int FIG_OPTION = CHAR_MAX + 1;
 
 void showUsage(bool err = false) {
   std::fprintf(!err ? stdout : stderr, "Usage: %s FILENAME...\n",
@@ -111,6 +114,7 @@ App &App::getInstance() {
 
 int App::run(int argc, char **argv) {
   const struct option options[] = {
+    {"fig", required_argument, nullptr, FIG_OPTION},
     {"help", no_argument, nullptr, 'h'},
     {"version", no_argument, nullptr, 'v'},
     {nullptr, 0, nullptr, 0},
@@ -125,6 +129,9 @@ int App::run(int argc, char **argv) {
 
   while ((c = getopt_long(argc, argv, "hv", options, nullptr)) != -1) {
     switch (c) {
+      case FIG_OPTION:
+        m_FigManager.init(Path{optarg});
+        break;
       case 'h':
         showUsage();
         return EXIT_SUCCESS;
@@ -137,11 +144,17 @@ int App::run(int argc, char **argv) {
     }
   }
 
+  if (!m_FigManager.isInitialized())
+    m_FigManager.init();
+
   if (argc <= optind)
     m_DocumentList.addNew(Document::createEmpty("<untitled>"));
-  else
-    for (int i = optind; i < argc; ++i)
+  else {
+    for (int i = optind; i < argc; ++i) {
+      Logger::info("adding Document `%s'", argv[i]);
       m_DocumentList.addNew(Document::createFromFile(argv[i]));
+    }
+  }
 
   m_UI.start();
   while (m_KeepRunning) {

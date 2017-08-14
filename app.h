@@ -19,6 +19,7 @@
 
 #include "clipboard.h"
 #include "documentlist.h"
+#include "figmanager.h"
 #include "selectmodehandler.h"
 #include "timeutils.h"
 #include "ui.h"
@@ -49,6 +50,8 @@ public:
   Mode getCurrentMode() const { return m_CurrentMode; }
   void setCurrentMode(Mode mode) { m_CurrentMode = mode; }
 
+  FigManager &getFigManager() { return m_FigManager; }
+
   const char *getExecName() const { return m_ExecName; }
   const char *getProgramName() const { return m_ProgramName; }
 
@@ -67,6 +70,7 @@ private:
   Clipboard m_Clipboard;
   SelectModeHandler m_SelectModeHandler;
   Mode m_CurrentMode;
+  FigManager m_FigManager;
   const char *m_ExecName;
   const char *m_ProgramName;
   bool m_KeepRunning = true;

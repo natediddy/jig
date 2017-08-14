@@ -19,19 +19,10 @@
 #include <assert.h>
 #include <cstdio>
 
+#include "logger.h"
+#include "strutils.h"
+
 namespace jig {
-namespace {
-
-std::size_t getLineCount(const std::string &str) {
-  std::size_t n = 0;
-  std::for_each(str.begin(), str.end(), [&n](const auto &ch) {
-    if (ch == '\n')
-      ++n;
-  });
-  return n;
-}
-
-} // namespace
 
 std::string Buffer::getStringAt(std::size_t pos, std::size_t count) const {
   return m_StrBuf.substr(pos, count);
@@ -141,7 +132,7 @@ Buffer::ConstLineIterator Buffer::getConstLineIterator(std::size_t pos) const {
 void Buffer::initLineBuf() {
   if (m_StrBuf.empty() || m_StrBuf.back() != '\n')
     m_StrBuf.append(1, '\n');
-  m_LineBuf.reserve(getLineCount(m_StrBuf));
+  m_LineBuf.reserve(str::occurs(m_StrBuf, '\n'));
   updateLineBuf();
 }
 
@@ -153,15 +144,19 @@ void Buffer::updateLineBuf() {
     if (*I == '\n') {
       if (m_LineBuf.empty()) {
         m_LineBuf.emplace_back(Line{B, I});
+        Logger::info("added line: \"%s\"", m_LineBuf.back().toString().c_str());
         continue;
       }
       if (I == B || (*(I - 1) == '\n')) {
         m_LineBuf.emplace_back(Line{I, I});
+        Logger::info("added line: \"%s\"", m_LineBuf.back().toString().c_str());
         continue;
       }
       for (auto P = I - 1; P != B; --P) {
         if (*P == '\n' || P == B) {
           m_LineBuf.emplace_back(Line{P == B ? P : P + 1, I});
+          Logger::info("added line: \"%s\"",
+                       m_LineBuf.back().toString().c_str());
           break;
         }
       }

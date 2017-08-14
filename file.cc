@@ -57,10 +57,6 @@ bool File::fileExists(const Path &path) {
   return stat(path.getCString(), &statBuf) == 0 && S_ISREG(statBuf.st_mode);
 }
 
-File::File(const std::string &path) : m_Path{path} {
-  initStats();
-}
-
 void File::update() {
   if (isOpen())
     close();

@@ -28,6 +28,7 @@ public:
   using LineIterator = std::vector<Line>::iterator;
   using ConstLineIterator = std::vector<Line>::const_iterator;
 
+  Buffer(const char *str) : m_StrBuf{str} { initLineBuf(); }
   Buffer(std::string str) : m_StrBuf{std::move(str)} { initLineBuf(); }
 
   const std::string &getStrBuf() const { return m_StrBuf; }
@@ -38,6 +39,7 @@ public:
 
   std::string getStringAt(std::size_t pos, std::size_t count) const;
   std::string getLineAt(std::size_t lineIndex) const;
+
   std::size_t getLineLengthAtPos(std::size_t pos) const;
   std::size_t getLineIndexAtPos(std::size_t pos) const;
   const Line &getLineAtPos(std::size_t pos) const;

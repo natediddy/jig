@@ -23,13 +23,17 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include "app.h"
+#include "file.h"
 #include "logger.h"
 
 namespace jig {
 namespace {
 
-constexpr char CONFIG_FILENAME[] = "config";
+constexpr char PROGRAM_DIRNAME[] = ".jig";
+
+constexpr char FIG_FILENAME[] = "fig";
+constexpr char LOCAL_FIG_FILENAME[] = ".jigfig";
+
 constexpr char LOG_FILENAME[] = "log";
 
 } // namespace
@@ -50,13 +54,20 @@ Path System::getHomeDirectory() {
 }
 
 Path System::getProgramDirectory() {
-  std::string base{"."};
-  base += App::PROGRAM_NAME;
-  return getHomeDirectory() + base;
+  return getHomeDirectory() + PROGRAM_DIRNAME;
 }
 
-Path System::getConfigPath() {
-  return getProgramDirectory() + CONFIG_FILENAME;
+Path System::getSystemFigPath() {
+  Path prefix{JIG_INSTALL_PREFIX};
+  return prefix + "etc" + FIG_FILENAME;
+}
+
+Path System::getUserFigPath() {
+  return getProgramDirectory() + FIG_FILENAME;
+}
+
+Path System::getLocalFigPath() {
+  return getCurrentDirectory() + LOCAL_FIG_FILENAME;
 }
 
 Path System::getLogPath() {

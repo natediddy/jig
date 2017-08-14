@@ -17,13 +17,11 @@
 #ifndef __JIG_PATH_H__
 #define __JIG_PATH_H__
 
-#include <string>
-
 #include <cstdio>
+#include <string>
 
 namespace jig {
 
-// Path represents a Unix style path
 class Path {
 public:
   static constexpr char SEPARATOR = '/';
@@ -31,34 +29,37 @@ public:
   static std::string getSanitized(const std::string &str);
   static void sanitize(std::string &str);
 
-  Path() : m_Str{""} {}
+  Path() = default;
+  Path(const Path &) = default;
+  Path(Path &&) = default;
+  Path &operator=(const Path &) = default;
+  Path &operator=(Path &&) = default;
 
   Path(const char *str) : m_Str{str} { sanitize(m_Str); }
-
   Path(const std::string &str) : m_Str{getSanitized(str)} {}
-
   Path(std::string &&str) : m_Str{std::move(str)} { sanitize(m_Str); }
 
   Path &operator=(const char *str) {
     m_Str = str;
+    sanitize(m_Str);
     return *this;
   }
 
   Path &operator=(const std::string &str) {
-    m_Str = str;
+    m_Str = getSanitized(str);
     return *this;
   }
 
   Path &operator=(std::string &&str) {
     m_Str = std::move(str);
+    sanitize(m_Str);
     return *this;
   }
 
   const std::string &getString() const { return m_Str; }
   const char *getCString() const { return m_Str.c_str(); }
 
-  std::size_t length() const { return m_Str.length(); }
-  std::size_t size() const { return m_Str.size(); }
+  std::size_t getLength() const { return m_Str.size(); }
 
   bool isEmpty() const { return m_Str.empty(); }
   bool isAbsolute() const { return m_Str.front() == SEPARATOR; }

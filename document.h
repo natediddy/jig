@@ -115,7 +115,7 @@ private:
   // The title shown in the TitleBar.
   std::string m_Title;
 
-  // Each Document should have it's own instance of a BufferView::Data struct.
+  // Each Document should have it's own instance of a BufferView::Data object.
   // There is only one BufferView instance in the entire program, but when it's
   // time to draw a Document's contents to the screen, the BufferView will grab
   // a const pointer of this member variable from the current Document.

@@ -68,8 +68,8 @@ void BufferView::writeToWindow() {
   std::size_t p = first->begin() - m_Buffer->getStrBuf().begin();
   int y = 0;
   int x;
-  auto &app = App::getInstance();
 
+  auto &app = App::getInstance();
   App::Mode mode = app.getCurrentMode();
   auto slice = app.getSelectModeHandler().getSlice();
   auto inSelectedSlice = [&slice](std::size_t pos) -> bool {

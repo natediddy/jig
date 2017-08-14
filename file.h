@@ -42,7 +42,8 @@ public:
   static bool fileExists(const Path &path);
 
   File() : m_Path{""} {}
-  File(const std::string &path);
+  File(const Path &path) : m_Path{path} { initStats(); }
+  File(Path &&path) : m_Path{std::move(path)} { initStats(); }
 
   ~File() {
     if (m_FPtr)

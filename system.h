@@ -27,7 +27,11 @@ struct System {
   static Path getCurrentDirectory();
   static Path getHomeDirectory();
   static Path getProgramDirectory();
-  static Path getConfigPath();
+
+  static Path getSystemFigPath();
+  static Path getUserFigPath();
+  static Path getLocalFigPath();
+
   static Path getLogPath();
 
   static void makeDirectory(const Path &path);
