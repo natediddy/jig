@@ -19,7 +19,6 @@
 #include <assert.h>
 #include <cstdio>
 
-#include "logger.h"
 #include "strutils.h"
 
 namespace jig {
@@ -144,19 +143,15 @@ void Buffer::updateLineBuf() {
     if (*I == '\n') {
       if (m_LineBuf.empty()) {
         m_LineBuf.emplace_back(Line{B, I});
-        Logger::info("added line: \"%s\"", m_LineBuf.back().toString().c_str());
         continue;
       }
       if (I == B || (*(I - 1) == '\n')) {
         m_LineBuf.emplace_back(Line{I, I});
-        Logger::info("added line: \"%s\"", m_LineBuf.back().toString().c_str());
         continue;
       }
       for (auto P = I - 1; P != B; --P) {
         if (*P == '\n' || P == B) {
           m_LineBuf.emplace_back(Line{P == B ? P : P + 1, I});
-          Logger::info("added line: \"%s\"",
-                       m_LineBuf.back().toString().c_str());
           break;
         }
       }

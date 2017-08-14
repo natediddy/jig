@@ -344,7 +344,6 @@ void Document::setContentsFromString(const std::string &str) {
 }
 
 void Document::setContentsFromFile(const std::string &path) {
-  Logger::info("setting contents from `%s'", path.c_str());
   m_File = std::make_unique<File>(Path{path});
   if (m_File->hadError()) {
     Logger::fatal("failed to initialize File object `%s' -- %s",
@@ -354,8 +353,6 @@ void Document::setContentsFromFile(const std::string &path) {
 
   if (!m_File->exists()) {
     setContentsFromString("\n");
-    Logger::info("`%s' does not exist; creating empty buffer",
-                 m_File->getPath().getCString());
     return;
   }
 
@@ -367,8 +364,6 @@ void Document::setContentsFromFile(const std::string &path) {
   }
 
   m_Buffer = std::make_unique<Buffer>(contents);
-  Logger::info("created Buffer from `%s' contents",
-               m_File->getPath().getCString());
 }
 
 } // namespace jig

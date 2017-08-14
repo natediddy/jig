@@ -20,7 +20,6 @@
 
 #include "app.h"
 #include "buffer.h"
-#include "logger.h"
 
 namespace jig {
 

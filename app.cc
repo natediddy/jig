@@ -149,12 +149,9 @@ int App::run(int argc, char **argv) {
 
   if (argc <= optind)
     m_DocumentList.addNew(Document::createEmpty("<untitled>"));
-  else {
-    for (int i = optind; i < argc; ++i) {
-      Logger::info("adding Document `%s'", argv[i]);
+  else
+    for (int i = optind; i < argc; ++i)
       m_DocumentList.addNew(Document::createFromFile(argv[i]));
-    }
-  }
 
   m_UI.start();
   while (m_KeepRunning) {
