@@ -28,7 +28,6 @@ struct System {
   static Path getHomeDirectory();
   static Path getProgramDirectory();
 
-  static Path getSystemFigPath();
   static Path getUserFigPath();
   static Path getLocalFigPath();
 

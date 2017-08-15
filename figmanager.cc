@@ -51,8 +51,6 @@ void FigManager::load(Path &&path) {
     return;
   if (tryFigPath(System::getUserFigPath(), "user-wide"))
     return;
-  if (tryFigPath(System::getSystemFigPath(), "system-wide"))
-    return;
 
   Logger::info("loading builtin fig");
   m_Fig = std::make_unique<Fig>();

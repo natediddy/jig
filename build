@@ -5,10 +5,10 @@ TARGET=
 BUILD_DIR=
 BUILD_TYPE=
 
-if [ "$1" = "--clean" ]; then
+if [ "$1" = "clean" ]; then
   rm -rf build-debug build-release $EXEC_NAME-debug $EXEC_NAME-release
   exit 0
-elif [ "$1" = "--debug" ]; then
+elif [ "$1" = "debug" ]; then
   TARGET="$EXEC_NAME-debug"
   BUILD_DIR=build-debug
   BUILD_TYPE=Debug

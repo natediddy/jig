@@ -57,11 +57,6 @@ Path System::getProgramDirectory() {
   return getHomeDirectory() + PROGRAM_DIRNAME;
 }
 
-Path System::getSystemFigPath() {
-  Path prefix{JIG_INSTALL_PREFIX};
-  return prefix + "etc" + FIG_FILENAME;
-}
-
 Path System::getUserFigPath() {
   return getProgramDirectory() + FIG_FILENAME;
 }

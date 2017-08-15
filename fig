@@ -1,4 +1,4 @@
-# Default config file for the Jig editor
+# Default config file for jig
 
 WrapLines = false
 ShowLineNumbers = false
