@@ -38,7 +38,7 @@ void SelectModeHandler::init(const Document &doc) {
   m_Head = m_Tail = doc.getCursorPosition();
 }
 
-std::pair<std::size_t, std::size_t> SelectModeHandler::getSlice() const {
+SelectModeHandler::Selection SelectModeHandler::getSelection() const {
   return maybeSwap(m_Head, m_Tail);
 }
 

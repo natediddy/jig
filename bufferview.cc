@@ -70,15 +70,14 @@ void BufferView::writeToWindow() {
 
   auto &app = App::getInstance();
   App::Mode mode = app.getCurrentMode();
-  auto slice = app.getSelectModeHandler().getSlice();
-  auto inSelectedSlice = [&slice](std::size_t pos) -> bool {
-    return pos >= slice.first && pos <= slice.second;
-  };
+  auto smh = app.getSelectModeHandler();
+  auto selection = smh.getSelection();
 
   std::for_each(first, last + 1, [&](const Line &l) {
     auto len = l.size();
     if (m_Data->offsetX >= len) {
-      bool selected = mode == App::Mode::SELECT && inSelectedSlice(p);
+      bool selected = (mode == App::Mode::SELECT) &&
+                      smh.isCursorWithinSelection(selection, p);
       if (selected)
         m_Window->enableAttrs(Window::Attr::REVERSE);
       m_Window->put(y, 0, ' ');
@@ -97,7 +96,7 @@ void BufferView::writeToWindow() {
     x = 0;
     if (mode == App::Mode::SELECT) {
       std::for_each(b, e, [&](const char &c) {
-        bool selected = inSelectedSlice(p);
+        bool selected = smh.isCursorWithinSelection(selection, p);
         if (selected)
           m_Window->enableAttrs(Window::Attr::REVERSE);
         m_Window->put(y, x++, c);

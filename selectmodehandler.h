@@ -25,6 +25,8 @@ class Document;
 
 class SelectModeHandler {
 public:
+  using Selection = std::pair<std::size_t, std::size_t>;
+
   SelectModeHandler() = default;
 
   void init(const Document &doc);
@@ -32,7 +34,18 @@ public:
 
   std::size_t getHead() const { return m_Head; }
   std::size_t getTail() const { return m_Tail; }
-  std::pair<std::size_t, std::size_t> getSlice() const;
+
+  Selection getSelection() const;
+
+  bool isCursorWithinSelection(std::size_t cursorPos) const {
+    Selection selection = getSelection();
+    return cursorPos >= selection.first && cursorPos <= selection.second;
+  }
+
+  bool isCursorWithinSelection(const Selection &selection,
+                               std::size_t cursorPos) const {
+    return cursorPos >= selection.first && cursorPos <= selection.second;
+  }
 
   std::size_t getLength() const;
   std::string getText(const Document &doc) const;
