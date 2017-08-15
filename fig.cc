@@ -40,7 +40,7 @@ const std::unordered_map<std::string, Settings::ValueType> VALID_OPTIONS = {
   {"TabWidth", Settings::ValueType::NUMBER},
 };
 
-const Path BUILTIN_FIG_PATH = "";
+const Path BUILTIN_FIG_DUMMY_PATH = "";
 
 void stripComments(std::string &line) {
   std::size_t p = line.find_first_of(COMMENT_CHAR);
@@ -71,22 +71,32 @@ Fig::Fig() : m_File{nullptr}, m_Buffer{BUILTIN_FIG} {
   parseSettings();
 }
 
-Fig::Fig(const Path &path)
-    : m_File{std::make_unique<File>(path)}, m_Buffer{m_File->readContents()} {
+Fig::Fig(const Path &path) : m_File{nullptr}, m_Buffer{BUILTIN_FIG} {
   parseSettings();
+  m_File = std::make_unique<File>(path);
+  m_Buffer = m_File->readContents();
+  parseSettings();
+
+  Logger::info("WrapLines -> %s",
+               m_Settings.get<bool>("WrapLines") ? "true" : "false");
+  Logger::info("ShowLineNumbers -> %s",
+               m_Settings.get<bool>("ShowLineNumbers") ? "true" : "false");
+  Logger::info("UseSpacesForTabs -> %s",
+               m_Settings.get<bool>("UseSpacesForTabs") ? "true" : "false");
+  Logger::info("TabWidth -> %d", m_Settings.get<int>("TabWidth"));
 }
 
 const Path &Fig::getPath() const {
   if (m_File)
     return m_File->getPath();
-  return BUILTIN_FIG_PATH;
+  return BUILTIN_FIG_DUMMY_PATH;
 }
 
 void Fig::parseSettings() {
   static const auto INVALID_OPTION = VALID_OPTIONS.end();
 
   for (auto B = m_Buffer.getFirstLineIterator(),
-            E = m_Buffer.getLastLineIterator(), I = B;
+            E = m_Buffer.getLastLineIterator() + 1, I = B;
        I != E; ++I) {
     std::string line{m_Buffer.getLineAt(I - B)};
     preprocessLine(line);

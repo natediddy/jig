@@ -20,6 +20,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <assert.h>
+
 namespace jig {
 
 class Settings {
@@ -40,12 +42,33 @@ public:
   Settings() = default;
 
   template <typename T>
-  T get(const std::string &key);
+  T get(const char *key) {
+    T value;
+    bool r = get(key, value);
+    assert(r != false && "Failed to retrieve key/value pair");
+    return value;
+  }
+
+  template <typename T>
+  T get(const std::string &key) {
+    T value;
+    bool r = get(key, value);
+    assert(r != false && "Failed to retrieve key/value pair");
+    return value;
+  }
+
+  template <typename T>
+  void set(const char *key, T value) {
+    m_Options[key] = value;
+  }
 
   template <typename T>
   void set(const std::string &key, T value) {
     m_Options[key] = value;
   }
+
+  auto begin() { return m_Options.begin(); }
+  auto end() { return m_Options.end(); }
 
 private:
   class Value {

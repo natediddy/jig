@@ -19,8 +19,6 @@
 #include <cctype>
 #include <cstdlib>
 
-#include <assert.h>
-
 #include "logger.h"
 #include "strutils.h"
 
@@ -87,14 +85,6 @@ bool Settings::convertStringToBoolean(const std::string &str) {
 
 int Settings::convertStringToNumber(const std::string &str) {
   return static_cast<int>(std::strtol(str.c_str(), nullptr, 10));
-}
-
-template <typename T>
-T Settings::get(const std::string &key) {
-  T value;
-  bool r = get(key, value);
-  assert(r != false && "Failed to retrieve key/value pair");
-  return value;
 }
 
 bool Settings::get(const std::string &key, bool &value) {

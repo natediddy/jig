@@ -31,6 +31,18 @@ public:
   Buffer(const char *str) : m_StrBuf{str} { initLineBuf(); }
   Buffer(std::string str) : m_StrBuf{std::move(str)} { initLineBuf(); }
 
+  Buffer &operator=(const char *str) {
+    m_StrBuf = str;
+    initLineBuf();
+    return *this;
+  }
+
+  Buffer &operator=(std::string str) {
+    m_StrBuf = std::move(str);
+    initLineBuf();
+    return *this;
+  }
+
   const std::string &getStrBuf() const { return m_StrBuf; }
   const std::vector<Line> &getLineBuf() const { return m_LineBuf; }
 
