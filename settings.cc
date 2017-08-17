@@ -87,7 +87,7 @@ int Settings::convertStringToNumber(const std::string &str) {
   return static_cast<int>(std::strtol(str.c_str(), nullptr, 10));
 }
 
-bool Settings::get(const std::string &key, bool &value) {
+bool Settings::get(const std::string &key, bool &value) const {
   auto it = m_Options.find(key);
   if (it == m_Options.end())
     return false;
@@ -101,7 +101,7 @@ bool Settings::get(const std::string &key, bool &value) {
   return true;
 }
 
-bool Settings::get(const std::string &key, int &value) {
+bool Settings::get(const std::string &key, int &value) const {
   auto it = m_Options.find(key);
   if (it == m_Options.end())
     return false;
@@ -115,7 +115,7 @@ bool Settings::get(const std::string &key, int &value) {
   return true;
 }
 
-bool Settings::get(const std::string &key, std::string &value) {
+bool Settings::get(const std::string &key, std::string &value) const {
   auto it = m_Options.find(key);
   if (it == m_Options.end())
     return false;

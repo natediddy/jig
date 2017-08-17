@@ -36,11 +36,11 @@ const int Window::Attr::INVISIBLE = A_INVIS;
 // const int Window::Attr::ITALIC = A_ITALIC;
 
 Window::Window(int h, int w, int y, int x)
-  : m_Height{h},
-    m_Width{w},
-    m_StartY{y},
-    m_StartX{x},
-    m_BackgroundColor{Color::DEFAULT, Color::DEFAULT} {
+    : m_Height{h},
+      m_Width{w},
+      m_StartY{y},
+      m_StartX{x},
+      m_BackgroundColor{Color::DEFAULT, Color::DEFAULT} {
   WINDOW **p = ((WINDOW **)&m_WinPtr);
   *p = newwin(m_Height, m_Width, m_StartY, m_StartX);
   if (!*p) {
@@ -51,11 +51,11 @@ Window::Window(int h, int w, int y, int x)
 }
 
 Window::Window(int h, int w, int y, int x, const Color &backgroundColor)
-  : m_Height{h},
-    m_Width{w},
-    m_StartY{y},
-    m_StartX{x},
-    m_BackgroundColor{backgroundColor} {
+    : m_Height{h},
+      m_Width{w},
+      m_StartY{y},
+      m_StartX{x},
+      m_BackgroundColor{backgroundColor} {
   WINDOW **p = ((WINDOW **)&m_WinPtr);
   *p = newwin(m_Height, m_Width, m_StartY, m_StartX);
   if (!*p) {
@@ -113,20 +113,20 @@ void Window::put(int y, int x, const char *str, std::size_t count) {
   mvwaddnstr((WINDOW *)m_WinPtr, y, x, str, count);
 }
 
-void Window::put(int y, int x, const char *fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  wmove((WINDOW *)m_WinPtr, y, x);
-  vw_printw((WINDOW *)m_WinPtr, fmt, args);
-  va_end(args);
-}
-
 void Window::put(int y, int x, const std::string &str) {
   mvwaddnstr((WINDOW *)m_WinPtr, y, x, str.c_str(), str.size());
 }
 
 void Window::put(int y, int x, const std::string &str, std::size_t count) {
   mvwaddnstr((WINDOW *)m_WinPtr, y, x, str.c_str(), count);
+}
+
+void Window::putf(int y, int x, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  wmove((WINDOW *)m_WinPtr, y, x);
+  vw_printw((WINDOW *)m_WinPtr, fmt, args);
+  va_end(args);
 }
 
 int Window::getKeypress() {

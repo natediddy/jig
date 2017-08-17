@@ -57,7 +57,10 @@ int View::getKeypress() {
   return m_Window->getKeypress();
 }
 
-void View::initWindow(int height, int width, int startY, int startX) {
+void View::initWindow(const char *name, int height, int width, int startY,
+                      int startX) {
+  Logger::info("Creating view \"%s\": height=%d width=%d y=%d x=%d", name,
+               height, width, startY, startX);
   m_Window = std::make_unique<Window>(height, width, startY, startX);
 }
 

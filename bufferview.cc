@@ -19,6 +19,7 @@
 #include <assert.h>
 
 #include "app.h"
+#include "logger.h"
 #include "buffer.h"
 
 namespace jig {
@@ -29,7 +30,7 @@ void BufferView::init() {
 }
 
 void BufferView::updateDimensions() {
-  auto &ui = App::getInstance().getUI();
+  UI &ui = App::getInstance().getUI();
   int titleBarHeight = ui.getTitleBar().getHeight();
   int h = ui.getHeight() - ui.getStatusBar().getHeight() - titleBarHeight;
   m_Window->resize(h, ui.getWidth());
@@ -38,17 +39,28 @@ void BufferView::updateDimensions() {
 }
 
 void BufferView::update() {
-  auto &doc = App::getInstance().getDocumentList().getCurrent();
+  const Document &doc = App::getInstance().getDocumentList().getCurrent();
   m_Buffer = doc.getBuffer();
   m_Data = doc.getBufferViewData();
   writeToWindow();
 }
 
 void BufferView::initWindow() {
-  auto &ui = App::getInstance().getUI();
+  App &app = App::getInstance();
+  UI &ui = app.getUI();
   int titleBarHeight = ui.getTitleBar().getHeight();
   int h = ui.getHeight() - ui.getStatusBar().getHeight() - titleBarHeight;
-  View::initWindow(h, ui.getWidth(), titleBarHeight, 0);
+  int w = ui.getWidth();
+  int x = 0;
+
+  if (app.getFig()->get<bool>("ShowLineNumbers")) {
+    Logger::info("ShowLineNumbers enabled");
+    int lineNumberColumnWidth = ui.getLineNumberColumn()->getWidth();
+    w -= lineNumberColumnWidth;
+    x += lineNumberColumnWidth;
+  }
+
+  View::initWindow("BufferView", h, w, titleBarHeight, x);
   m_Window->enableKeypad();
 }
 

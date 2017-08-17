@@ -42,7 +42,7 @@ public:
   Settings() = default;
 
   template <typename T>
-  T get(const char *key) {
+  T get(const char *key) const {
     T value;
     bool r = get(key, value);
     assert(r != false && "Failed to retrieve key/value pair");
@@ -50,7 +50,7 @@ public:
   }
 
   template <typename T>
-  T get(const std::string &key) {
+  T get(const std::string &key) const {
     T value;
     bool r = get(key, value);
     assert(r != false && "Failed to retrieve key/value pair");
@@ -98,9 +98,9 @@ private:
     } m_Value;
   };
 
-  bool get(const std::string &key, bool &value);
-  bool get(const std::string &key, int &value);
-  bool get(const std::string &key, std::string &value);
+  bool get(const std::string &key, bool &value) const;
+  bool get(const std::string &key, int &value) const;
+  bool get(const std::string &key, std::string &value) const;
 
   std::unordered_map<std::string, Value> m_Options;
 };

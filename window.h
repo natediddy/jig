@@ -14,7 +14,6 @@
 // limitations under the License.
 //===--------------------------------------------------------------------===//
 
-
 #ifndef __JIG_WINDOW_H__
 #define __JIG_WINDOW_H__
 
@@ -64,9 +63,10 @@ public:
   void put(int y, int x, char ch);
   void put(int y, int x, const char *str);
   void put(int y, int x, const char *str, std::size_t count);
-  void put(int y, int x, const char *fmt, ...);
   void put(int y, int x, const std::string &str);
   void put(int y, int x, const std::string &str, std::size_t count);
+
+  void putf(int y, int x, const char *fmt, ...);
 
   int getKeypress();
 

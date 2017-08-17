@@ -67,7 +67,7 @@ void TitleBar::removeTitle(std::size_t index) {
 }
 
 void TitleBar::initWindow() {
-  View::initWindow(m_Repr.size(), App::getInstance().getUI().getWidth(), 0, 0);
+  View::initWindow("TitleBar", m_Repr.size(), App::getInstance().getUI().getWidth(), 0, 0);
   m_Window->enableAttrs(Window::Attr::REVERSE);
 }
 

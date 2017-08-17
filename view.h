@@ -41,7 +41,8 @@ public:
   virtual int getKeypress();
 
 protected:
-  void initWindow(int height, int width, int startY, int startX);
+  void initWindow(const char *name, int height, int width, int startY,
+                  int startX);
   void writeToWindow();
 
   std::unique_ptr<Window> m_Window = nullptr;

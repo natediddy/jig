@@ -73,8 +73,10 @@ void resizeHandler(int sig) {
   endwin();
   refresh();
   clear();
-  App::getInstance().getUI().updateDimensions();
-  App::getInstance().getUI().draw();
+
+  UI &ui = App::getInstance().getUI();
+  ui.updateDimensions();
+  ui.draw();
 }
 
 } // namespace
@@ -110,8 +112,13 @@ void UI::start() {
   getmaxyx(stdscr, m_Height, m_Width);
   std::signal(SIGWINCH, resizeHandler);
 
+  if (App::getInstance().getFig()->get<bool>("ShowLineNumbers"))
+    m_LineNumberColumn = std::make_unique<LineNumberColumn>();
+
   m_TitleBar.init();
   m_StatusBar.init();
+  if (m_LineNumberColumn)
+    m_LineNumberColumn->init();
   m_BufferView.init();
 
   m_Running = true;
@@ -126,16 +133,27 @@ void UI::stop() {
 void UI::updateDimensions() {
   if (!m_Running)
     return;
+
   getmaxyx(stdscr, m_Height, m_Width);
+
   m_TitleBar.updateDimensions();
   m_StatusBar.updateDimensions();
+
+  if (m_LineNumberColumn)
+    m_LineNumberColumn->updateDimensions();
+
   m_BufferView.updateDimensions();
 }
 
 void UI::draw() {
   ::refresh();
+
   m_TitleBar.draw();
   m_StatusBar.draw();
+
+  if (m_LineNumberColumn)
+    m_LineNumberColumn->draw();
+
   m_BufferView.draw();
 }
 
@@ -256,10 +274,15 @@ void UI::update(bool updateTitleBar, bool updateStatusBar,
                 bool updateBufferView) {
   if (updateTitleBar)
     m_TitleBar.update();
+
   if (updateStatusBar)
     m_StatusBar.update();
-  if (updateBufferView)
+
+  if (updateBufferView) {
+    if (m_LineNumberColumn)
+      m_LineNumberColumn->update();
     m_BufferView.update();
+  }
 }
 
 } // namespace jig

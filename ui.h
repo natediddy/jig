@@ -14,11 +14,11 @@
 // limitations under the License.
 //===--------------------------------------------------------------------===//
 
-
 #ifndef __JIG_UI_H__
 #define __JIG_UI_H__
 
 #include "bufferview.h"
+#include "linenumbercolumn.h"
 #include "statusbar.h"
 #include "titlebar.h"
 
@@ -50,12 +50,18 @@ public:
   BufferView &getBufferView() { return m_BufferView; }
   const BufferView &getBufferView() const { return m_BufferView; }
 
+  LineNumberColumn *getLineNumberColumn() { return m_LineNumberColumn.get(); }
+  const LineNumberColumn *getLineNumberColumn() const {
+    return m_LineNumberColumn.get();
+  }
+
 private:
   void update(bool updateTitleBar, bool updateStatusBar, bool updateBufferView);
 
   TitleBar m_TitleBar;
   StatusBar m_StatusBar;
   BufferView m_BufferView;
+  std::unique_ptr<LineNumberColumn> m_LineNumberColumn = nullptr;
   int m_Height = 0;
   int m_Width = 0;
   bool m_Running = false;

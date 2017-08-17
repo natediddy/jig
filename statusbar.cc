@@ -30,7 +30,6 @@ constexpr char BOTTOM_STRING[] = "Bottom";
 void StatusBar::init() {
   initWindow();
   update();
-  writeToWindow();
 }
 
 void StatusBar::updateDimensions() {
@@ -58,7 +57,7 @@ void StatusBar::update() {
 
 void StatusBar::initWindow() {
   UI &ui = App::getInstance().getUI();
-  View::initWindow(1, ui.getWidth(), ui.getHeight() - 1, 0);
+  View::initWindow("StatusBar", 1, ui.getWidth(), ui.getHeight() - 1, 0);
   m_Window->enableAttrs(Window::Attr::BOLD | Window::Attr::REVERSE);
 }
 

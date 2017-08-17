@@ -26,7 +26,9 @@ public:
   FigManager() = default;
 
   void init(Path path = "");
+
   Fig *getCurrentFig() { return m_Fig.get(); }
+  const Fig *getCurrentFig() const { return m_Fig.get(); }
 
   bool isInitialized() const { return m_Initialized; }
 

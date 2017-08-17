@@ -50,7 +50,8 @@ public:
   Mode getCurrentMode() const { return m_CurrentMode; }
   void setCurrentMode(Mode mode) { m_CurrentMode = mode; }
 
-  FigManager &getFigManager() { return m_FigManager; }
+  Fig *getFig() { return m_FigManager.getCurrentFig(); }
+  const Fig *getFig() const { return m_FigManager.getCurrentFig(); }
 
   const char *getExecName() const { return m_ExecName; }
   const char *getProgramName() const { return m_ProgramName; }
