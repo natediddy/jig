@@ -74,7 +74,7 @@ void LineNumberColumn::writeToWindow() {
   char space[m_MaxDigits];
 
   std::memset(space, ' ', m_MaxDigits);
-  for (int y = 0; y < height; ++y, ++lineNumber) {
+  for (int y = 0; y < height; ++y) {
     if (lineNumber > m_TotalLines) {
       m_Window->put(y, 0, space, m_MaxDigits);
       m_Window->put(y, last, *space);
@@ -83,7 +83,7 @@ void LineNumberColumn::writeToWindow() {
     nDigits = getNumberOfDigits(lineNumber);
     nSpaces = m_MaxDigits - nDigits;
     m_Window->put(y, 0, space, nSpaces);
-    m_Window->putf(y, nSpaces, "%zu", lineNumber);
+    m_Window->putf(y, nSpaces, "%zu", lineNumber++);
     m_Window->put(y, last, *space);
   }
 }
