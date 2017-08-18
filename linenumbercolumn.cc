@@ -55,6 +55,8 @@ void LineNumberColumn::update() {
     buffer->getFirstLineIterator();
   m_TotalLines = buffer->getTotalLines();
   m_MaxDigits = getNumberOfDigits(m_TotalLines);
+  if (m_Window)
+    writeToWindow();
 }
 
 void LineNumberColumn::initWindow() {
